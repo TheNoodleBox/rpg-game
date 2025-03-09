@@ -1,42 +1,38 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-int AddTwoNumbers(int a = 5, int b = 10)
-{
-	return a + b;
-}
-
-
 int main()
 {
-	std::cout << AddTwoNumbers() << std::endl;
-
 	// INITIALIZE
 
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	sf::RenderWindow window(sf::VideoMode(800, 600), "RPG Game", sf::Style::Default, settings);
 
-
-	// sf::RenderWindow window(sf::VideoMode(800, 600), "RPG Game");
-	sf::CircleShape shape(50.0f);
-	shape.setFillColor(sf::Color::Red);
-	shape.setPosition(sf::Vector2f(100, 100));
-	shape.setOutlineThickness(10);
-	shape.setOutlineColor(sf::Color::Blue);
-
-	sf::RectangleShape rectangle(sf::Vector2f(100, 60));
-	rectangle.setPosition(sf::Vector2f(100, 100));
-	rectangle.setFillColor(sf::Color::Yellow);
-	rectangle.setOrigin(rectangle.getSize() / 2.0f);
-	rectangle.setRotation(45);
-
-	//sf::CircleShape triangle(80, 3);
-
-	//sf::CircleShape square(50, 4);
-
-	//sf::CircleShape octagon(80, 8);
 	// INITIALIZE
+
+	// Load
+	sf::Texture playerTexture;
+	sf::Sprite playerSprite;
+
+	if (playerTexture.loadFromFile("Assets/Player/Textures/spritesheet.png"))
+	{
+		std::cout << "Player images loaded!" << std::endl;
+		playerSprite.setTexture(playerTexture);
+
+		// starting point, size of wanted sprite
+		// x, y, Width, Height
+		int Xindex = 0;
+		int Yindex = 0;
+
+		playerSprite.setTextureRect(sf::IntRect(Xindex * 64, Yindex * 64, 64, 64));
+	}
+	else
+	{
+		std::cout << "PLayer images failed to load :(" << std::endl;
+	}
+
+	// Load
 
 	// main game loop
 	while (window.isOpen())
@@ -50,15 +46,27 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
+
+		sf::Vector2f position = playerSprite.getPosition();
+
+		// windows is weird so up is -Y and down is Y
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			playerSprite.setPosition(position + sf::Vector2f(1, 0));
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			playerSprite.setPosition(position + sf::Vector2f(-1, 0));
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+			playerSprite.setPosition(position + sf::Vector2f(0, -1));
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			playerSprite.setPosition(position + sf::Vector2f(0, 1));
+
 		// ---------------UPDATE-------------
 
 		// ----------------DRAW--------------
 		window.clear(sf::Color::Black);
-		window.draw(shape);
-		window.draw(rectangle);
-		//window.draw(triangle);
-		//window.draw(square);
-		//window.draw(octagon);
+		window.draw(playerSprite);
 		window.display();
 		// ----------------DRAW--------------
 	}
