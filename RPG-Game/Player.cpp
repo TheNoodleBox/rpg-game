@@ -4,7 +4,13 @@
 
 void Player::Initialize()
 {
+	boundingRectangle.setFillColor(sf::Color::Transparent);
+	boundingRectangle.setOutlineColor(sf::Color::Red);
+	boundingRectangle.setOutlineThickness(1);
 
+
+	size = sf::Vector2i(64, 64);
+	
 }
 
 void Player::Load()
@@ -17,9 +23,15 @@ void Player::Load()
 		int Xindex = 0;
 		int Yindex = 0;
 
-		sprite.setTextureRect(sf::IntRect(Xindex * 64, Yindex * 64, 64, 64));
-		sprite.scale(sf::Vector2f(3, 3));
+		sprite.setTextureRect(sf::IntRect(Xindex * size.x, Yindex * size.y, size.x, size.y));
 		sprite.setPosition(sf::Vector2f(0, 0));
+		
+		sprite.scale(sf::Vector2f(3, 3));
+
+		sprite.scale(sf::Vector2f(1, 1));
+		boundingRectangle.setSize(
+			sf::Vector2f(size.x * sprite.getScale().x, size.y * sprite.getScale().y)
+		);
 	}
 	else
 	{
@@ -27,22 +39,22 @@ void Player::Load()
 	}
 }
 
-void Player::Update(Skeleton& skeleton)
+void Player::Update(float deltaTime, Skeleton& skeleton)
 {
 	sf::Vector2f position = sprite.getPosition();
 
 	// windows is weird so up is -Y and down is Y
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		sprite.setPosition(position + sf::Vector2f(1, 0));
+		sprite.setPosition(position + sf::Vector2f(1, 0) * playerSpeed * deltaTime);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		sprite.setPosition(position + sf::Vector2f(-1, 0));
+		sprite.setPosition(position + sf::Vector2f(-1, 0) * playerSpeed * deltaTime);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		sprite.setPosition(position + sf::Vector2f(0, -1));
+		sprite.setPosition(position + sf::Vector2f(0, -1) * playerSpeed * deltaTime);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		sprite.setPosition(position + sf::Vector2f(0, 1));
+		sprite.setPosition(position + sf::Vector2f(0, 1) * playerSpeed * deltaTime);
 
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
@@ -58,13 +70,22 @@ void Player::Update(Skeleton& skeleton)
 		sf::Vector2f bulletDirection = skeleton.sprite.getPosition() - bullets[i].getPosition();
 		// static function from the Math class to get Math::NormalizeVector to work
 		bulletDirection = Math::NormalizeVector(bulletDirection);
-		bullets[i].setPosition(bullets[i].getPosition() + bulletDirection * bulletSpeed);
+		bullets[i].setPosition(bullets[i].getPosition() + bulletDirection * bulletSpeed * deltaTime);
+	}
+
+	boundingRectangle.setPosition(sprite.getPosition());
+
+
+	if (Math::DidRectCollision(sprite.getGlobalBounds(), skeleton.sprite.getGlobalBounds()))
+	{
+		std::cout << "COLLISION" << std::endl;
 	}
 }
 
 void Player::Draw(sf::RenderWindow& window)
 {
 	window.draw(sprite);
+	window.draw(boundingRectangle);
 
 	for (size_t i = 0; i < bullets.size(); i++)
 	{

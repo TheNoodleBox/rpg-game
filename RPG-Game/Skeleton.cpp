@@ -3,7 +3,11 @@
 
 void Skeleton::Initialize()
 {
+	boundingRectangle.setFillColor(sf::Color::Transparent);
+	boundingRectangle.setOutlineColor(sf::Color::Blue);
+	boundingRectangle.setOutlineThickness(1);
 
+	size = sf::Vector2i(64, 64);
 }
 
 void Skeleton::Load()
@@ -17,9 +21,12 @@ void Skeleton::Load()
 		int Xindex = 0;
 		int Yindex = 2;
 
-		sprite.setTextureRect(sf::IntRect(Xindex * 64, Yindex * 64, 64, 64));
+		sprite.setTextureRect(sf::IntRect(Xindex * size.x, Yindex * size.y, size.x, size.y));
 		sprite.scale(sf::Vector2f(3, 3));
 
+		boundingRectangle.setSize(
+			sf::Vector2f(size.x * sprite.getScale().x, size.y * sprite.getScale().y)
+		);
 	}
 	else
 	{
@@ -27,12 +34,13 @@ void Skeleton::Load()
 	}
 }
 
-void Skeleton::Update()
+void Skeleton::Update(float deltaTime)
 {
-
+	boundingRectangle.setPosition(sprite.getPosition());
 }
 
 void Skeleton::Draw(sf::RenderWindow& window)
 {
 	window.draw(sprite);
+	window.draw(boundingRectangle);
 }
