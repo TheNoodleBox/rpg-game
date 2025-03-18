@@ -2,6 +2,14 @@
 #include <iostream>
 #include "Math.h"
 
+Player::Player()
+{
+}
+
+Player::~Player()
+{
+}
+
 void Player::Initialize()
 {
 	boundingRectangle.setFillColor(sf::Color::Transparent);

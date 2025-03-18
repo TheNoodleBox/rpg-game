@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+
+#include "FrameRate.h"
 #include "Player.h"
 #include "Skeleton.h"
 
@@ -12,16 +14,20 @@ int main()
 	window.setFramerateLimit(360);
 	// INITIALIZE------------------------------------------------
 
+	
+	FrameRate frameRate;
 	Player player;
 	Skeleton skeleton;
 
 	// INITIALIZE------------------------------------------------
-
+	frameRate.Initialize();
 	player.Initialize();
 	skeleton.Initialize();
 	// INITIALIZE------------------------------------------------
 
 	// Load ------------------------------------------------
+	
+	frameRate.Load();
 	player.Load();
 	skeleton.Load();
 	// Load ------------------------------------------------
@@ -32,7 +38,9 @@ int main()
 	while (window.isOpen())
 	{
 		sf::Time deltaTimeTimer = clock.restart();
-		float deltaTime = deltaTimeTimer.asMilliseconds();
+		double deltaTime = deltaTimeTimer.asMicroseconds() / 1000.0;
+
+		//std::cout << "FPS: " << 1000.0 / deltaTime << " frameTime: " << deltaTime << std::endl;
 
 		//-----------------UPDATE----------------
 		sf::Event event;
@@ -42,6 +50,7 @@ int main()
 				window.close();
 		}
 
+		frameRate.Update(deltaTime);
 		skeleton.Update(deltaTime);
 		player.Update(deltaTime, skeleton);
 		// ---------------UPDATE-------------
@@ -50,6 +59,7 @@ int main()
 		window.clear(sf::Color::Black);
 		skeleton.Draw(window);
 		player.Draw(window);
+		frameRate.Draw(window);
 		window.display();
 		// ----------------DRAW--------------
 
