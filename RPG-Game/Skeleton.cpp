@@ -1,12 +1,19 @@
 #include "Skeleton.h"
 #include <iostream>
 
-Skeleton::Skeleton()
+Skeleton::Skeleton() : 
+	health(100) 
 {
 }
 
 Skeleton::~Skeleton()
 {
+}
+
+void Skeleton::ChangeHealth(int hp)
+{
+	health += hp; // reduces health by specified number
+	healthText.setString(std::to_string(health));  // updates hp only when chnaged instead of every frame
 }
 
 void Skeleton::Initialize()
@@ -20,6 +27,17 @@ void Skeleton::Initialize()
 
 void Skeleton::Load()
 {
+	if (font.loadFromFile("Assets/Fonts/arial.ttf"))
+	{
+		std::cout << "Arial.ttf font in Assets has been loaded successfully >^.^<" << std::endl;
+		healthText.setFont(font);
+		healthText.setString(std::to_string(health));
+	}
+	else
+	{
+		std::cout << "Failed to load Arial.ttf font in Assets :(" << std::endl;
+	}
+
 	if (texture.loadFromFile("Assets/Skeleton/Textures/spritesheet.png"))
 	{
 		std::cout << "Skeleton image loaded :D" << std::endl;
@@ -44,11 +62,20 @@ void Skeleton::Load()
 
 void Skeleton::Update(float deltaTime)
 {
-	boundingRectangle.setPosition(sprite.getPosition());
+	if (health > 0)
+	{
+		boundingRectangle.setPosition(sprite.getPosition());
+		healthText.setPosition(sprite.getPosition());
+	}
+	
 }
 
 void Skeleton::Draw(sf::RenderWindow& window)
 {
-	window.draw(sprite);
-	window.draw(boundingRectangle);
+	if (health > 0) 
+	{
+		window.draw(sprite);
+		window.draw(boundingRectangle);
+		window.draw(healthText);
+	}
 }
