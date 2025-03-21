@@ -6,7 +6,6 @@
 #include "Player.h"
 #include "Skeleton.h"
 
-#include "MapLoader.h"
 
 int main()
 {
@@ -23,8 +22,6 @@ int main()
 	Player player;
 	Skeleton skeleton;
 
-	MapLoader mapLoader;
-	mapLoader.Load("assets/maps/level1.rmap");
 
 	// INITIALIZE------------------------------------------------
 	frameRate.Initialize();
@@ -36,7 +33,7 @@ int main()
 	// Load ------------------------------------------------
 	
 	frameRate.Load();
-	map.Load();
+	map.Load("assets/maps/level1.rmap");
 	player.Load();
 	skeleton.Load();
 	// Load ------------------------------------------------
